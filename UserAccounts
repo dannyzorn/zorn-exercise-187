@@ -1,0 +1,166 @@
+//AUTHOR:[Danny Zorn]
+//COURSE:[CPT 187]
+//PURPOSE:[supporting class used to load/create user file and keep record of user names and passwords] 
+//STARTDATE:[07-12-2020]
+
+package edu.cpt187.zorn.participation6;
+//imports
+import java.io.PrintWriter;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+
+public class UserAccounts 
+{
+	//declare class CONSTANTS
+	final private int 		NOT_FOUND		=	-1;
+	final private int 		RESET_VALUE		=	0;
+	final private int 		MAX_RECORDS		=	50;
+	//declare class non-constant attributes
+	private String[]		userNames		=	new String[MAX_RECORDS];
+	private String[]		passwords		=	new String[MAX_RECORDS];
+	private boolean 		fileFoundFlag 	= 	false;
+	private String			masterFileName	=	"";
+	private int				recordCount		=	0;
+	private int				searchedIndex	=	0;
+	
+	//constructor
+	UserAccounts(String borrowedFileName)
+	{
+		masterFileName	=	borrowedFileName;
+	}
+	
+	//SETTERS
+	//set method
+	//reads a file for employee user account information
+	public void setUserAccountArrays()
+	{
+		recordCount	=	RESET_VALUE;
+		
+		try
+		{
+			Scanner inputFile =	new Scanner(new FileInputStream(masterFileName));
+			while( (inputFile.hasNext() ) && (recordCount < MAX_RECORDS) )
+			{
+				//Read a complete record of masterFileName
+				userNames[recordCount]	=	inputFile.next();
+				passwords[recordCount]	=	inputFile.next();
+				recordCount++;
+			}
+			//close scanner and file
+			inputFile.close();
+		}
+		catch(IOException ex)
+		{
+			recordCount	=	NOT_FOUND;
+		}
+	}
+	
+	//SETTERS
+	//set method
+	//sets the searched index equal to the return of getSeqSearch
+	public void setSearchedIndex(String borrowedUserName)
+	{
+		searchedIndex	=	getSeqSearch(borrowedUserName);
+	}
+	
+	//SETTERS
+	//set method
+	//sets the searched index equal to the return of getSeqSearch IF searchedIndex is 0 and getPasswordMatch returns false
+	public void setSearchedIndex(String borrowedUserName, String borrowedPassword)
+	{
+		//verify that user name is NOT found
+		searchedIndex	=	getSeqSearch(borrowedUserName);
+	
+		//userName index is RESET_VALUE and NOT password[searchedIndex] match
+		if( (searchedIndex == RESET_VALUE) && ( !getPasswordMatch(borrowedPassword) ) )
+		{	
+			searchedIndex	=	RESET_VALUE;
+		}
+	}
+	
+	//SETTERS
+	//set method
+	//writes borrowedUserName and borrowedPassword to masterFileName file
+	public void setWriteOneRecord(String borrowedUserName, String borrowedPassword)
+	{
+		try
+		{
+			PrintWriter	localPrintWriter	=	new PrintWriter(new FileWriter(masterFileName,true));
+			
+			localPrintWriter.printf("%s\t%s\t\n", borrowedUserName,borrowedPassword);
+			fileFoundFlag	=	true;
+			
+			localPrintWriter.close();
+		}
+		catch(IOException ex)
+		{
+			fileFoundFlag	=	false;	
+		}
+	}
+		
+	//GETTERS
+	//get method
+	//performs a sequential search in userNames[] for borrowedBorrowedUserName
+	public int getSeqSearch(String borrowedBorrowedUserName)
+	{
+		int 	localIndex	=	0;
+		searchedIndex		=	NOT_FOUND;
+		
+		while(localIndex < recordCount)
+		{
+			if ( userNames[localIndex].equalsIgnoreCase(borrowedBorrowedUserName) )
+			{
+				searchedIndex	=	localIndex;
+				localIndex		=	MAX_RECORDS;
+			}
+			else
+			{
+				localIndex++;
+			}
+		}
+		return	searchedIndex;
+	}
+	
+	//GETTERS
+	//get method
+	//compares borrowedBorrowedPassword with password array index of [searchedIndex]
+	public boolean getPasswordMatch(String borrowedBorrowedPassword)
+	{	
+		//check if password matches
+		return	(passwords[searchedIndex].equals(borrowedBorrowedPassword));
+	}
+	
+	//GETTERS
+	//get method
+	//returns the bool val fileFoundFlag
+	public boolean getFileFoundFlag()
+	{
+		return fileFoundFlag;
+	}
+	
+	//GETTERS
+	//get method
+	//returns the string val masterFileName
+	public String getFileName()
+	{
+		return masterFileName;
+	}
+
+	//GETTERS
+	//get method
+	//returns the string val recordCount
+	public int getRecordCount()
+	{
+		return recordCount;
+	}
+
+	//GETTERS
+	//get method
+	//returns the string val searchedIndex
+	public int getSearchedIndex()
+	{
+		return searchedIndex;
+	}
+}
