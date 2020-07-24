@@ -1,0 +1,83 @@
+//AUTHOR:[Danny Zorn]
+//COURSE:[CPT 187]
+//PURPOSE:[supportive class used to open and write to master order file] 
+//STARTDATE:[07-12-2020]
+
+package edu.cpt187.zorn.participation6;
+	//imports
+	import java.io.PrintWriter;
+	import java.io.FileWriter;
+	import java.io.IOException;
+	
+public class OrderWriter 
+{
+	//declare class variables
+	private boolean fileFoundFlag 	= 	false;
+	private String	masterFileName	=	"";
+	private int		recordCount		=	0;
+	
+	//constructor
+	OrderWriter(String borrowedFileName)
+	{
+		masterFileName	=	borrowedFileName;
+	}
+	
+	//SETTERS
+	//SET behavior
+	//writes the order into a user defined file
+	public void setWriteOrder(int borrowedItemID, 
+								String 	borrowedItemName,
+								double 	borrowedItemPrice,
+								int 	borrowedQuantity,
+								double 	borrowedOrderCost) 
+	{
+		//try to open file and write values
+		try
+		{
+			//create file writer instantiation
+			PrintWriter filePW	=	new	PrintWriter(new FileWriter(masterFileName,true));
+			//record a complete record with borrowed vals
+			filePW.printf("%d\t%s\t%.2f\t%d\t%.2f\t%n",
+						  borrowedItemID,borrowedItemName,
+						  borrowedItemPrice,borrowedQuantity,
+						  borrowedOrderCost);
+			//count up for the record
+			recordCount++;
+			
+			//set file found flag
+			fileFoundFlag	=	true;
+			
+			//close the file
+			filePW.close();
+		}
+		catch (IOException ex)
+		{
+			fileFoundFlag	=	false;
+		}
+	}
+	
+	//GETTERS
+	//GET behavior
+	//get fileFoundFlag
+	public boolean getFileFoundFlag ()
+	{
+		return fileFoundFlag;
+	}
+	
+
+	//GETTERS
+	//GET behavior
+	//get fileFoundFlag
+	public String getFileName ()
+	{
+		return masterFileName;
+	}
+	
+	//GETTERS
+	//GET behavior
+	//get recordCount
+	public int getRecordCount()
+	{
+		return recordCount;
+	}	
+}
